@@ -201,26 +201,112 @@ public class MiListaCircular implements ListInterface {
 
     @Override
     public boolean contains(Object object) {
-        return false;
+        return search(object) != null;
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] arreglo = new Object[getSize()];
+
+        if (cabeza == null) {
+            return arreglo;
+        }
+
+        Node actual = cabeza;
+        int i = 0;
+        do {
+            arreglo[i] = actual.dato;
+            i++;
+            actual = actual.siguiente;
+        } while (actual != cabeza);
+
+        return arreglo;
     }
 
     @Override
     public Object[] toArray(Object[] object) {
-        return new Object[0];
+        int size = getSize();
+
+        if (object.length < size) {
+            object = new Object[size];
+        }
+
+        if (cabeza != null) {
+            Node actual = cabeza;
+            int i = 0;
+            do {
+                object[i] = actual.dato;
+                i++;
+                actual = actual.siguiente;
+            } while (actual != cabeza);
+        }
+
+        if (object.length > size) {
+            object[size] = null;
+        }
+
+        return object;
     }
 
     @Override
     public MiListaCircular subList(Node from, Node to) {
+        if (from == null || to == null || cabeza == null) return null;
+
+        MiListaCircular sub = new MiListaCircular();
+        Node actual = from;
+
+        do {
+            sub.insertTail(actual.dato);
+            if (actual == to) {
+                return sub;
+            }
+            actual = actual.siguiente;
+        } while (actual != from);
+
         return null;
     }
 
     @Override
     public MiListaCircular sortList() {
-        return null;
+            MiListaCircular ordenada = new MiListaCircular();
+            Object[] arreglo = this.toArray();
+
+            for (int i = 0; i < arreglo.length - 1; i++) {
+                for (int j = 0; j < arreglo.length - 1 - i; j++) {
+                    Comparable actual = (Comparable) arreglo[j];
+                    if (actual.compareTo(arreglo[j + 1]) > 0) {
+                        Object temp = arreglo[j];
+                        arreglo[j] = arreglo[j + 1];
+                        arreglo[j + 1] = temp;
+                    }
+                }
+            }
+
+            for (Object dato : arreglo) {
+                ordenada.insertTail(dato);
+            }
+
+            return ordenada;
+    }
+
+    @Override
+    public String toString() {
+        if (cabeza == null) {
+            return "[]";
+        }
+
+        String resultado = "[";
+        Node actual = cabeza;
+
+        do {
+            resultado = resultado + actual.dato;
+            actual = actual.siguiente;
+            if (actual != cabeza) {
+                resultado = resultado + ", ";
+            }
+        } while (actual != cabeza);
+
+        resultado = resultado + "]";
+        return resultado;
     }
 }
